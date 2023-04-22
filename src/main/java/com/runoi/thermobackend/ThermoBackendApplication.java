@@ -8,6 +8,7 @@ public class ThermoBackendApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ThermoBackendApplication.class, args);
+
 	}
 
 }

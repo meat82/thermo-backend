@@ -14,3 +14,7 @@ sudo docker stop thermo-backend
 
 ## Start Docker ##
 sudo docker stop thermo-backend
+
+## Test using curl ##
+curl -X POST localhost:8009/temperatures/add -H 'Content-type:application/json' -d '{"nametemperature_value": 10.3}'
+curl -X GET localhost:8009/temperatures/all
