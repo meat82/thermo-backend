@@ -2,6 +2,7 @@ package com.runoi.thermobackend.controllers;
 
 import com.runoi.thermobackend.entities.Temperature;
 import com.runoi.thermobackend.repositories.TemperatureRepository;
+import com.runoi.thermobackend.services.TemperatureService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +22,13 @@ import java.util.List;
 public class ThermoController {
 
     @Autowired
-    TemperatureRepository temperatureRepository;
+    TemperatureService service;
 
     @GetMapping(value = "/all", produces = "application/json")
     public List<Temperature> getAllValues(){
         log.info("Get all temperatures");
         try {
-            return temperatureRepository.findAll();
+            return service.getAllTemperatures();
         }catch (Exception e){
             log.error(e.getMessage());
             throw new ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR,e);
@@ -38,7 +39,7 @@ public class ThermoController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Temperature addTemperature(@RequestBody Temperature temperature){
         log.info("Add temperature: {}", temperature);
-        return temperatureRepository.save(temperature);
+        return service.saveTemperature(temperature);
     }
 
 }
