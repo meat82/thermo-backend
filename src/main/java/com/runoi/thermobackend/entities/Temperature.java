@@ -3,16 +3,24 @@ package com.runoi.thermobackend.entities;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "temperatures")
+@Builder
+@ToString
+@Getter
+@Setter
 public class Temperature {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "temperature_value", nullable = false)
     private Double temperatureValue;
@@ -25,45 +33,4 @@ public class Temperature {
     @Column(name = "temperature_note")
     private String note;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Double getTemperatureValue() {
-        return temperatureValue;
-    }
-
-    public void setTemperatureValue(Double temperatureValue) {
-        this.temperatureValue = temperatureValue;
-    }
-
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    @Override
-    public String toString() {
-        return "Temperature{" +
-                "id=" + id +
-                ", temperatureValue=" + temperatureValue +
-                ", dateTime=" + dateTime +
-                ", note='" + note + '\'' +
-                '}';
-    }
 }
