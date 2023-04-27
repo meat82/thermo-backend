@@ -7,7 +7,7 @@ mvn clean install
 sudo docker build -t thermo-backend .
 
 ## Run Docker ##
-sudo docker run -d -p 8009:8009 thermo-backend
+sudo docker run --rm -t -d -p 8009:8009 --name thermo-backend thermo-backend:latest
 
 ## Stop Docker ##
 sudo docker stop thermo-backend
