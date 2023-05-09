@@ -29,7 +29,7 @@ public class Temperature {
     @Column(name = "temperature_value", nullable = false)
     private Double temperatureValue;
 
-    @CreationTimestamp
+    @CreationTimestamp()
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "posting_timestamp", columnDefinition = "TIMESTAMP")
     private LocalDateTime dateTime;

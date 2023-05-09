@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.Calendar;
 import java.util.List;
 
 @Transactional
@@ -21,5 +24,9 @@ public class TemperatureService {
 
     public Temperature saveTemperature(Temperature temperature){
         return repository.saveAndFlush(temperature);
+    }
+
+    public List<Temperature> getTemperaturesByDate(String year, String month, String day) throws DateTimeParseException, NumberFormatException {
+        return repository.findByDate(LocalDateTime.of(2023, 1, 20, 0, 0, 0), LocalDateTime.of(2023, 1, 20, 23, 59, 59));
     }
 }
