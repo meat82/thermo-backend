@@ -37,7 +37,11 @@ public class TempereatureServiceTest {
         var temperature3 = Temperature.builder().dateTime(date1).temperatureValue(10.5).build();
         var temperatures = Arrays.asList(temperature1, temperature2, temperature3);
         //when
-        repository.saveAllAndFlush(temperatures);
+        var saved = repository.saveAllAndFlush(temperatures);
+        var temp = saved.get(0);
+        temp.setDateTime(date1);
+        repository.saveAndFlush(temp);
+        //repository.save()
         //then
         var temperaturesFromRepo = service.getAllTemperatures();
         System.out.println(temperaturesFromRepo);
