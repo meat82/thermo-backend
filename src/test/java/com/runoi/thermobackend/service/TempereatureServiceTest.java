@@ -31,20 +31,14 @@ public class TempereatureServiceTest {
     @DisplayName("Find all temperatures")
     public void findAllTest(){
         //given
-        var date1 = LocalDateTime.of(2023, 1, 20, 0, 0, 0);
-        var temperature1 = Temperature.builder().dateTime(date1).temperatureValue(10.5).build();
-        var temperature2 = Temperature.builder().dateTime(date1).temperatureValue(10.5).build();
-        var temperature3 = Temperature.builder().dateTime(date1).temperatureValue(10.5).build();
+        var temperature1 = Temperature.builder().temperatureValue(10.5).build();
+        var temperature2 = Temperature.builder().temperatureValue(10.5).build();
+        var temperature3 = Temperature.builder().temperatureValue(10.5).build();
         var temperatures = Arrays.asList(temperature1, temperature2, temperature3);
         //when
-        var saved = repository.saveAllAndFlush(temperatures);
-        var temp = saved.get(0);
-        temp.setDateTime(date1);
-        repository.saveAndFlush(temp);
-        //repository.save()
+        repository.saveAllAndFlush(temperatures);
         //then
         var temperaturesFromRepo = service.getAllTemperatures();
-        System.out.println(temperaturesFromRepo);
         assertEquals(temperatures.size(),temperaturesFromRepo.size());
     }
 
@@ -52,15 +46,24 @@ public class TempereatureServiceTest {
     @DisplayName("Find temperatures by date")
     public void findByDateTest(){
         //given
-        var date1 = LocalDateTime.of(2023, 1, 20, 0, 0, 0);
-        var date2 = LocalDateTime.of(2023, 1, 21, 0, 0, 0);
-        var temperature1 = Temperature.builder().dateTime(date1).temperatureValue(10.5).build();
-        var temperature2 = Temperature.builder().dateTime(date1).temperatureValue(10.5).build();
-        var temperature3 = Temperature.builder().dateTime(date2).temperatureValue(10.5).build();
+        var date = LocalDateTime.of(2023, 1, 20, 0, 0, 0);
+        var temperature1 = Temperature.builder().temperatureValue(10.5).build();
+        var temperature2 = Temperature.builder().temperatureValue(10.5).build();
+        var temperature3 = Temperature.builder().temperatureValue(10.5).build();
         var temperatures = Arrays.asList(temperature1, temperature2, temperature3);
         //when
-        repository.saveAllAndFlush(temperatures);
+        var saved = repository.saveAllAndFlush(temperatures);
+        var changeDate = saved.get(0);
+        changeDate.setDateTime(date);
+        repository.saveAndFlush(changeDate);
         //then
+        var byDate = service.getTemperaturesByDate("2023", "01", "20");
+        assertEquals(1, byDate.size());
+        byDate.stream().forEach(temperature -> {
+            assertEquals(temperature.getDateTime().getYear(), date.getYear());
+            assertEquals(temperature.getDateTime().getMonthValue(), date.getMonthValue());
+            assertEquals(temperature.getDateTime().getDayOfMonth(), date.getDayOfMonth());
+        });
 
     }
 }

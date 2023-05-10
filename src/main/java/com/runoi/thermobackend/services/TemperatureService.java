@@ -27,6 +27,9 @@ public class TemperatureService {
     }
 
     public List<Temperature> getTemperaturesByDate(String year, String month, String day) throws DateTimeParseException, NumberFormatException {
-        return repository.findByDate(LocalDateTime.of(2023, 1, 20, 0, 0, 0), LocalDateTime.of(2023, 1, 20, 23, 59, 59));
+        return repository.findByDate(
+                LocalDateTime.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day), 0, 0, 0),
+                LocalDateTime.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day), 23, 59, 59)
+        );
     }
 }
