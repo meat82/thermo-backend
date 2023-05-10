@@ -1,48 +1,96 @@
 package com.runoi.thermobackend.controllers;
 
 import com.runoi.thermobackend.entities.Temperature;
+import com.runoi.thermobackend.entities.TemperatureAverage;
 import com.runoi.thermobackend.execeptions.InvalidTemperatureExeception;
 import com.runoi.thermobackend.services.TemperatureService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.NotImplementedException;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
 @RequestMapping("temperatures")
+@RequiredArgsConstructor
 public class ThermoController {
 
-    @Autowired
-    TemperatureService service;
+    private final TemperatureService service;
 
-    @GetMapping(value = "/all", produces = "application/json")
-    public List<Temperature> getAllValues(){
+    @Operation(summary = "Get all temperature")
+    @GetMapping(value = "/all",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Temperature>> getAllValues(){
         log.info("Get all temperatures");
         try {
-            return service.getAllTemperatures();
+            var temperatures = service.getAllTemperatures();
+            return new ResponseEntity<>(temperatures, HttpStatus.OK);
         }catch (Exception e){
             log.error(e.getMessage());
             throw new ErrorResponseException(HttpStatus.INTERNAL_SERVER_ERROR,e);
         }
     }
+
+    @Operation(summary = "Get temperature by date")
+    @GetMapping(value = {"/date/{year}","/date/{year}/{month}","/date/{year}/{month}/{day}"})
+    public ResponseEntity<List<Temperature>> getValuesByDate(
+                    @PathVariable String year,
+                    @PathVariable Optional<String> month,
+                    @PathVariable Optional<String> day)
+    {
+        log.info("Get value by date {} {} {}", year, month, day);
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @Operation(summary = "Get temperature average by date")
+    @GetMapping(value = {"/date/{year}/avg","/date/{year}/{month}/avg","/date/{year}/{month}/{day}/avg"})
+    public ResponseEntity<TemperatureAverage> getTemperatureAgvByDate(
+            @PathVariable String year,
+            @PathVariable Optional<String> month,
+            @PathVariable Optional<String> day)
+    {
+        log.info("Get average temperature by date {} {} {}", year, month, day);
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
     @PostMapping(value = "/add",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Temperature addTemperature(@RequestBody Temperature temperature){
-        log.info("Add temperature: {}", temperature);
-        if(temperature.getTemperatureValue() == null)
+    public ResponseEntity<Temperature> addTemperature(@RequestBody TemperatureRequest request){
+        log.info("Add temperature: {}", request);
+        if(request.getTemperatureValue() == null)
             throw new InvalidTemperatureExeception("Missing temperature");
-        return service.saveTemperature(temperature);
+
+        var temperatureSaved = service.saveTemperature(request.toEntity());
+        return new ResponseEntity<>(temperatureSaved, HttpStatus.OK);
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    void temperatureMissing(InvalidTemperatureExeception e){
-        log.error(e.getMessage());
+    @Value
+    public static class TemperatureRequest {
+
+        @Schema(example = "10.5", requiredMode = Schema.RequiredMode.REQUIRED)
+        private Double temperatureValue;
+
+        @Schema(example = "10.5", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        private String note;
+
+        public Temperature toEntity(){
+            return Temperature.builder().temperatureValue(temperatureValue).note(note).build();
+        }
     }
+
 }

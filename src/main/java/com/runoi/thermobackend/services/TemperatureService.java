@@ -2,6 +2,7 @@ package com.runoi.thermobackend.services;
 
 import com.runoi.thermobackend.entities.Temperature;
 import com.runoi.thermobackend.repositories.TemperatureRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,10 +14,10 @@ import java.util.List;
 
 @Transactional
 @Service
+@RequiredArgsConstructor
 public class TemperatureService {
 
-    @Autowired
-    TemperatureRepository repository;
+    private final TemperatureRepository repository;
 
     public List<Temperature> getAllTemperatures(){
         return repository.findAll();
