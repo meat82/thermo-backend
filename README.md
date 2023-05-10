@@ -1,4 +1,5 @@
 # thermo-backend
+Base project
 
 ## Build Project ##
 mvn clean install
