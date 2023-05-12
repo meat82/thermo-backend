@@ -55,11 +55,9 @@ public class ThermoController {
                     @PathVariable Optional<String> day)
     {
         log.info("Get value by date {} {} {}", year, month.orElse(""), day.orElse(""));
-        List<Temperature> temperatures;
-
-        temperatures = service.getTemperaturesByDate(year, month.orElse(""), day.orElse(""));
-
-        return new ResponseEntity<>(temperatures, HttpStatus.OK);
+        List<Temperature> response = service.getTemperaturesByDate(year, month.orElse(""), day.orElse(""));
+        log.info("response: {}", response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Operation(summary = "Get temperature average by date")
@@ -69,8 +67,14 @@ public class ThermoController {
             @PathVariable Optional<String> month,
             @PathVariable Optional<String> day)
     {
-        log.info("Get average temperature by date {} {} {}", year, month.get(), day.get());
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        log.info("Get average temperature by date {} {} {}", year, month.orElse(""), day.orElse(""));
+        List<Temperature> temperatures = service.getTemperaturesByDate(year, month.orElse(""), day.orElse(""));
+        var total = temperatures.stream()
+                .map(Temperature::getTemperatureValue)
+                .reduce((double) 0, Double::sum);
+        var response = TemperatureAverage.builder().average(total / temperatures.size()).temperatures(temperatures.stream().map(Temperature::getTemperatureValue).toList()).build();
+        log.info("response: {}", response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(value = "/add",
