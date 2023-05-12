@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface TemperatureRepository extends JpaRepository<Temperature,Long> {
 
-    public List<Temperature> findByDateTime(LocalDateTime dateTime);
+    List<Temperature> findByDateTime(LocalDateTime dateTime);
 
     @Query("SELECT t FROM Temperature t WHERE t.dateTime BETWEEN :dateTimeStart AND :dateTimeEnd")
-    public List<Temperature> findByDate(LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd);
+    List<Temperature> findByDate(LocalDateTime dateTimeStart, LocalDateTime dateTimeEnd);
 
 }

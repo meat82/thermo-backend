@@ -19,7 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,8 +54,12 @@ public class ThermoController {
                     @PathVariable Optional<String> month,
                     @PathVariable Optional<String> day)
     {
-        log.info("Get value by date {} {} {}", year, month, day);
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        log.info("Get value by date {} {} {}", year, month.orElse(""), day.orElse(""));
+        List<Temperature> temperatures;
+
+        temperatures = service.getTemperaturesByDate(year, month.orElse(""), day.orElse(""));
+
+        return new ResponseEntity<>(temperatures, HttpStatus.OK);
     }
 
     @Operation(summary = "Get temperature average by date")
@@ -63,7 +69,7 @@ public class ThermoController {
             @PathVariable Optional<String> month,
             @PathVariable Optional<String> day)
     {
-        log.info("Get average temperature by date {} {} {}", year, month, day);
+        log.info("Get average temperature by date {} {} {}", year, month.get(), day.get());
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
@@ -85,7 +91,7 @@ public class ThermoController {
         @Schema(example = "10.5", requiredMode = Schema.RequiredMode.REQUIRED)
         private Double temperatureValue;
 
-        @Schema(example = "10.5", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        @Schema(example = "some note", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
         private String note;
 
         public Temperature toEntity(){

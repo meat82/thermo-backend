@@ -12,12 +12,13 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 
 @ControllerAdvice
 @Slf4j
 public class ThermoControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = { InvalidTemperatureExeception.class})
+    @ExceptionHandler(value = { InvalidTemperatureExeception.class, NumberFormatException.class, DateTimeParseException.class})
     public ResponseEntity<TemperatureErrorResponse> invalidTemperatureHandler(Exception ex, WebRequest request) {
         log.error(ex.getMessage());
         var response = TemperatureErrorResponse.builder()
