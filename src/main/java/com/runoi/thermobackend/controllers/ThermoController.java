@@ -48,11 +48,11 @@ public class ThermoController {
     }
 
     @Operation(summary = "Get temperature by date")
-    @GetMapping(value = {"/date/{year}","/date/{year}/{month}","/date/{year}/{month}/{day}"})
+    @GetMapping(value = "/date")
     public ResponseEntity<List<Temperature>> getValuesByDate(
-                    @PathVariable String year,
-                    @PathVariable Optional<String> month,
-                    @PathVariable Optional<String> day)
+            @RequestParam(value = "year") @Schema(example = "2023") String year,
+            @RequestParam(value = "month", required = false) @Schema(example = "05") Optional<String> month,
+            @RequestParam(value = "day", required = false) @Schema(example = "01") Optional<String> day)
     {
         log.info("Get value by date {} {} {}", year, month.orElse(""), day.orElse(""));
         List<Temperature> response = service.getTemperaturesByDate(year, month.orElse(""), day.orElse(""));
@@ -60,12 +60,32 @@ public class ThermoController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get temperature between dates. E.g startDay=2023-05-01, endDay=2023-05-06")
+    @GetMapping(value = "/date/between")
+    public ResponseEntity<List<Temperature>> getValuesBetweenDates(
+            @RequestParam(value = "startDay") @Schema(example = "2023-05-01") String startDay,
+            @RequestParam(value = "endDay") @Schema(example = "2023-05-02") String endDay)
+    {
+        log.info("Get temperatures between dates {} {}", startDay, endDay);
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @Operation(summary = "Get temperature average between dates. E.g startDay=2023-05-01, endDay=2023-05-06")
+    @GetMapping(value = "/date/between/avg")
+    public ResponseEntity<List<Temperature>> getAverageBetweenDates(
+            @RequestParam(value = "startDay") @Schema(example = "2023-05-01") String startDay,
+            @RequestParam(value = "endDay") @Schema(example = "2023-05-02") String endDay)
+    {
+        log.info("Get temperature average between dates {} {}", startDay, endDay);
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
     @Operation(summary = "Get temperature average by date")
-    @GetMapping(value = {"/date/{year}/avg","/date/{year}/{month}/avg","/date/{year}/{month}/{day}/avg"})
+    @GetMapping(value = "/date/avg")
     public ResponseEntity<TemperatureAverage> getTemperatureAgvByDate(
-            @PathVariable String year,
-            @PathVariable Optional<String> month,
-            @PathVariable Optional<String> day)
+            @RequestParam(value = "year") @Schema(example = "2023") String year,
+            @RequestParam(value = "month", required = false) @Schema(example = "05") Optional<String> month,
+            @RequestParam(value = "day", required = false) @Schema(example = "01") Optional<String> day)
     {
         log.info("Get average temperature by date {} {} {}", year, month.orElse(""), day.orElse(""));
         List<Temperature> temperatures = service.getTemperaturesByDate(year, month.orElse(""), day.orElse(""));
@@ -102,5 +122,16 @@ public class ThermoController {
             return Temperature.builder().temperatureValue(temperatureValue).note(note).build();
         }
     }
+
+
+    @Schema(name = "year", example = "2023", description = "year", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String year;
+
+    @Schema(name = "month", example = "05", description = "month")
+    private String month;
+
+    @Schema(name = "day", example = "01", description = "day")
+    private String day;
+
 
 }
